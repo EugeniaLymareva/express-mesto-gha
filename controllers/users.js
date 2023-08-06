@@ -12,17 +12,18 @@ module.exports.getUsers = (_req, res) => {
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(new Error('NotValidId'))
+    .orFail()
     .then(user => {
       res.status(200).send(user)
     })
     .catch((err) => {
-      console.log('TUT', err.name, err.message)
-      if (err.message === 'NotValidId') {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' })
-      } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' })
+      if (err.name === 'DocumentNotFoundError') {
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' })
       }
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные _id пользователя' })
+      }
+      return res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' })
     })
 }
 
@@ -32,7 +33,6 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then(user => res.status(201).send(user))
     .catch(err => {
-      console.log('TUT', err.name)
       if (err.name === 'ValidationError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' })
       }
@@ -51,10 +51,10 @@ module.exports.updateUser = (req, res) => {
       upsert: true // если пользователь не найден, он будет создан
     }
   )
-    .orFail(new Error('NotValidId'))
+    .orFail()
     .then(user => res.status(200).send(user))
     .catch(err => {
-      if (err.message === 'NotValidId') {
+      if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' })
       }
       if (err.name === 'ValidationError') {
@@ -75,10 +75,10 @@ module.exports.updateUserAvatar = (req, res) => {
       upsert: true // если пользователь не найден, он будет создан
     }
   )
-    .orFail(new Error('NotValidId'))
+    .orFail()
     .then(user => res.status(200).send(user))
     .catch(err => {
-      if (err.message === 'NotValidId') {
+      if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' })
       }
       if (err.name === 'ValidationError') {

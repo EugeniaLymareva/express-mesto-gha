@@ -24,13 +24,15 @@ module.exports.createCard = (req, res) => {
 }
 
 module.exports.deleteCard = (req, res) => {
-  console.log(req.params.cardId)
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(new Error('NotValidId'))
+    .orFail()
     .then(card => res.status(200).send(card))
     .catch(err => {
-      if (err.message === 'NotValidId') {
+      if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' })
+      }
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные _id для удаления карточки' })
       }
       return res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' })
     })
@@ -41,13 +43,13 @@ module.exports.likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true })
-    .orFail(new Error('NotValidId'))
+    .orFail()
     .then(card => res.status(200).send(card))
     .catch(err => {
-      if (err.message === 'NotValidId') {
+      if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' })
       }
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' })
       }
       return res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' })
@@ -59,13 +61,13 @@ module.exports.dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true })
-    .orFail(new Error('NotValidId'))
+    .orFail()
     .then(card => res.status(200).send(card))
     .catch(err => {
-      if (err.message === 'NotValidId') {
+      if (err.name === 'DocumentNotFoundError') {
         return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' })
       }
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка' })
       }
       return res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' })
