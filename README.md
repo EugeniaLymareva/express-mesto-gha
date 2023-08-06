@@ -18,4 +18,4 @@ The file structure is implemented according to the Nested BEM methodology.
 *Express.js
 
 ## Project on Git hub 
-https://github.com/EugeniaLymareva/express-mesto-gha
+https://github.com/EugeniaLymareva/express-mesto-gha.github.io
