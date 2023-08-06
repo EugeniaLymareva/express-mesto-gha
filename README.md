@@ -1,16 +1,21 @@
-[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
+# Project: Mesto
 
+## Description of the project and it's functionality:
+An interactive service where the user can add his profile, upload photos, sign and delete them, put likes.
 
-## Директории
+## Direction:
+Author's photographs of tourist places, landscapes, natural parks, cultural heritage sites, and so on.
 
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки  
-  
-Остальные директории вспомогательные, создаются при необходимости разработчиком
+## Technologies used:
+Flexbox layout, Grid Layout technology is used, adaptive layout and media queries are implemented.
+The file structure is implemented according to the Nested BEM methodology.
 
-## Запуск проекта
+## Technology stack:
+*HTML
+*CSS
+*JS
+*Node.js
+*Express.js
 
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+## Project on Git hub 
+https://github.com/EugeniaLymareva/express-mesto-gha
