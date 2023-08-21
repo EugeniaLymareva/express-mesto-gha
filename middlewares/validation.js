@@ -1,6 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 
-const pattern = '^(https?:\\/\\/)?(www\\.)?[a-zA-Z0-9-_.~:/?#[\\]@!$&\'()*+,;=%]+#?$';
+const pattern = '^https?://(www\\.)?[a-zA-Z0-9-_.~:/?#[\\]@!$&\'()*+,;=%]+#?$';
 const regex = new RegExp(pattern, 'i');
 
 const validationSignUp = celebrate({

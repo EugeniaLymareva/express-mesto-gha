@@ -31,18 +31,26 @@ module.exports.getUserId = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
+  console.log('createUser');
   const {
-    name, about, avatar, email, password,
+    password,
+    ...userWithOutPassword
   } = req.body;
 
   User.create({
-    name,
-    about,
-    avatar,
-    email,
+    ...userWithOutPassword,
     password: bcrypt.hashSync(password, 10),
   })
-    .then((user) => res.send(user))
+    .then((user) => {
+      const userObj = user.toObject();
+      const {
+        password: createdPassword,
+        ...createdUserWithOutPassword
+      } = userObj;
+      return res.send(createdUserWithOutPassword);
+
+      // return res.send(createdUserWithOutPassword);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
@@ -114,7 +122,7 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       /// вернём токен
-      res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
+      res.cookie('token', token, { maxAge: 3600000, httpOnly: true }).send({ token });
     })
     .catch(next);
 };
