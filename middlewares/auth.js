@@ -3,13 +3,10 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET = 'some-secret-key' } = process.env;
 
 module.exports = (req, res, next) => {
-  /// достаём авторизационный заголовок
-  const { authorization: token } = req.headers;
-  console.log('Proverka', req.headers);
-  // console.log('Proverka1', authorization);
+  // достаём авторизационный заголовок
+  const { token } = req.cookies;
   /// убеждаемся, что он есть или начинается с Bearer
   if (!token) {
-    // console.log('Proverka1', authorization);
     return res.status(401).send({ message: 'Необходима авторизация' });
   }
   /// извлекаем токен методом replace чтобы выкинуть из заголовка приставку 'Bearer ',
@@ -19,7 +16,6 @@ module.exports = (req, res, next) => {
   try {
     /// верифицируем токен методом verify
     payload = jwt.verify(token, JWT_SECRET);
-    console.log('Proverka3', payload);
   } catch (err) {
     return res.status(401).send({ message: 'Необходима авторизация' });
   }

@@ -122,7 +122,10 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       /// вернём токен
-      res.cookie('token', token, { maxAge: 3600000, httpOnly: true }).send({ token });
+      const response = res.clearCookie('token').cookie('token', token, { maxAge: 3600000, httpOnly: true });
+      console.log(response);
+      response.send({token});
+      // res.cookie('token', token, { maxAge: 3600000, httpOnly: true }).send({ token });
     })
     .catch(next);
 };
