@@ -31,7 +31,6 @@ module.exports.getUserId = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  console.log('createUser');
   const {
     password,
     ...userWithOutPassword
