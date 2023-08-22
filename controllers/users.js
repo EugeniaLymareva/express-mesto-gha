@@ -1,6 +1,6 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 const NotFoundError = require('../errors/not-found-err'); // 404
 const BadRequestError = require('../errors/bad-request-err'); // 400
@@ -25,6 +25,7 @@ module.exports.getUserId = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные _id пользователя'));
+        return;
       }
       next(err);
     });
@@ -47,8 +48,6 @@ module.exports.createUser = (req, res, next) => {
         ...createdUserWithOutPassword
       } = userObj;
       return res.send(createdUserWithOutPassword);
-
-      // return res.send(createdUserWithOutPassword);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -56,6 +55,7 @@ module.exports.createUser = (req, res, next) => {
       }
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже существует'));
+        return;
       }
       next(err);
     });
@@ -80,6 +80,7 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        return;
       }
       next(err);
     });
@@ -104,6 +105,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
+        return;
       }
       next(err);
     });
@@ -122,9 +124,7 @@ module.exports.login = (req, res, next) => {
       );
       /// вернём токен
       const response = res.clearCookie('token').cookie('token', token, { maxAge: 3600000, httpOnly: true });
-      console.log(response);
-      response.send({token});
-      // res.cookie('token', token, { maxAge: 3600000, httpOnly: true }).send({ token });
+      response.send({ token });
     })
     .catch(next);
 };

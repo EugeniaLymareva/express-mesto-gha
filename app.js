@@ -6,6 +6,7 @@ const { errors } = require('celebrate');
 
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const errorHandler = require('./middlewares/error-handler');
 const { validationSignUp, validationSignIn } = require('./middlewares/validation');
 const NotFoundError = require('./errors/not-found-err');
 
@@ -33,19 +34,20 @@ app.use((req, res, next) => {
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
-  const { statusCode = 500, message } = err;
+app.use(errorHandler);
+// app.use((err, req, res, next) => {
+//   // если у ошибки нет статуса, выставляем 500
+//   const { statusCode = 500, message } = err;
 
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-});
+//   res
+//     .status(statusCode)
+//     .send({
+//       // проверяем статус и выставляем сообщение в зависимости от него
+//       message: statusCode === 500
+//         ? 'На сервере произошла ошибка'
+//         : message,
+//     });
+// });
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
